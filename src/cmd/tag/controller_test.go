@@ -34,14 +34,6 @@ var (
 )
 
 func formdata() *bytes.Buffer {
-	// buf := new(bytes.Buffer)
-	// w := multipart.NewWriter(buf)
-	// label, _ := w.CreateFormField("name")
-	// label.Write([]byte("Anto"))
-	// title, _ := w.CreateFormField("title")
-	// title.Write([]byte("title here"))
-	// description, _ := w.CreateFormField("description")
-	// description.Write([]byte("description here"))
 
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
@@ -49,27 +41,6 @@ func formdata() *bytes.Buffer {
 	bodyWriter.WriteField("name", "Anto")
 	bodyWriter.WriteField("title", "title here")
 	bodyWriter.WriteField("description", "description here")
-	// buf := new(bytes.Buffer)
-	// Create file field
-	// fw, err := w.CreateFormFile("upload", tarball)
-	// if err != nil {
-	// 	return err
-	// }
-	// fd, err := os.Open(tarball)
-	// if err != nil {
-	// 	return err
-	// }
-	// defer fd.Close()
-	// Write file field from file to upload
-	// _, err = io.Copy(fw, fd)
-	// if err != nil {
-	// 	return err
-	// }
-	// Important if you do not close the multipart writer you will not have a
-	// terminating boundry
-	// w.Close()
-
-	// return buf
 	bodyWriter.Close()
 	return bodyBuf
 }
@@ -143,34 +114,6 @@ func TestCreatetag(t *testing.T) {
 
 }
 
-// func TestCreatetag1(t *testing.T) {
-// 	e := echo.New()
-// 	// endpoint := "http://localhost:2200/api/tags"
-// 	endpoint := "/api/tags"
-
-// 	// request, _ := http.NewRequest("POST", endpoint, formdata())
-// 	request, _ := http.NewRequest("POST", endpoint, formdata())
-// 	request.Header.Set(echo.HeaderContentType, echo.MIMEMultipartForm)
-// 	addAuthorization(t, request, authorisationType, data, time.Minute)
-// 	e.POST(endpoint, cont.Create, middle.PasetoAuthMiddleware)
-
-// 	fmt.Println("step1>>>>>>>>>>>>>-----------", request)
-// 	response := httptest.NewRecorder()
-// 	fmt.Println("step2>>>>>>>>>>>>>-----------")
-// 	// c := e.NewContext(request, response)
-
-//		fmt.Println("step3>>>>>>>>>>>>>-----------")
-//		e.ServeHTTP(response, request)
-//		// client := &http.Client{}
-//		// res, _ := client.Do(request)
-//		// fmt.Println("step4>>>>>>>>>>>>>-----------", res.StatusCode)
-//		// Assertions
-//		// if assert.NoError(t, cont.Create(c)) {
-//		// 	assert.Equal(t, http.StatusCreated, recorder.Code)
-//		fmt.Println("step 5>>>>>>>>>>>>>-----------", response.Body)
-//		// 	// assert.Equal(t, userJSON, recorder.Body.String())
-//		// }
-//	}
 func TestGetAlltag(t *testing.T) {
 	testCases := []struct {
 		name          string
@@ -230,64 +173,6 @@ func TestGetAlltag(t *testing.T) {
 	assert.EqualValues(t, 200, response.Code)
 }
 
-// func TestGetOnetag(t *testing.T) {
-// 	testCases := []struct {
-// 		name          string
-// 		jsond         []byte
-// 		ResponseCode  int
-// 		ResponceName  string
-// 		ResponceTitle string
-// 	}{
-// 		{name: "ok",
-// 			jsond:        []byte(`{"name":"name","title":"this title","description":"description"}`),
-// 			ResponseCode: http.StatusOK,
-// 		},
-// 		{name: "not found",
-// 			ResponseCode: 404,
-// 		},
-// 	}
-// 	for i := range testCases {
-// 		tc := testCases[i]
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			res := CreateTestProduct(t, tc.jsond)
-// 			tagi := &Tag{}
-// 			json.NewDecoder(res.Body).Decode(&tagi)
-// 			e := echo.New()
-// 			fmt.Println("777777777777777", tagi)
-// 			// tagi.Code = "tagCodeshopa1-16623"
-// 			endpoint := "/api/tags/" + tagi.Code
-// 			// values := map[string]string{"code": tagi.Code}
-// 			// jsonData, _ := json.Marshal(values)
-// 			// fmt.Println("777777777777777", tagi.Code)
-// 			// request, _ := http.NewRequest("GET", endpoint, bytes.NewBuffer(jsonData))
-// 			request, _ := http.NewRequest("GET", endpoint, nil)
-// 			request.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 			addAuthorization(t, request, authorisationType, data, time.Minute)
-// 			// q := request.URL.Query()
-// 			// q.Add("code", tagi.Code)
-// 			// request.URL.RawQuery = q.Encode()
-
-// 			e.GET(endpoint, cont.GetOne, middle.PasetoAuthMiddleware)
-// 			response := httptest.NewRecorder()
-// 			e.ServeHTTP(response, request)
-
-// 			// assert.EqualValues(t, 200, response.Code)
-// 			tag := Tag{}
-// 			json.NewDecoder(response.Body).Decode(&tag)
-// 			fmt.Println(">>>>>>>>>>>>>>>ADSgdghhh", tag)
-// 			assert.EqualValues(t, tc.ResponseCode, response.Code)
-// 			//cleanup
-// 			service := NewtagService(NewtagRepo())
-// 			if tag.Code != "" {
-// 				assert.EqualValues(t, tc.ResponceName, tag.Name)
-// 				assert.EqualValues(t, tc.ResponceTitle, tag.Title)
-// 				service.Delete(tag.Code)
-// 			}
-// 			service.Delete(tag.Code)
-// 		})
-// 	}
-// }
-
 func TestUpdatetag(t *testing.T) {
 	e := echo.New()
 	endpoint := "/api/tags"
@@ -312,15 +197,3 @@ func TestDeletetag(t *testing.T) {
 	require.Equal(t, http.StatusOK, recorder.Code)
 	fmt.Println(">>>>>>>>>>>>>-----------", recorder)
 }
-
-// jsond := []byte(`{"name":"name","title":"this title","description":"description"}`)
-// response := CreateTestProduct(t, jsond)
-// assert.Equal(t, http.StatusCreated, response.Code)
-// tag := &Tag{}
-// json.NewDecoder(response.Body).Decode(&tag)
-// assert.EqualValues(t, 201, response.Code)
-// assert.EqualValues(t, tag.Name, "name")
-// assert.EqualValues(t, tag.Title, "this title")
-// //cleanup
-// service := NewtagService(NewtagRepo())
-// service.Delete(tag.Code)

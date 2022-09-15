@@ -40,7 +40,6 @@ func NewtagController(ser TagServiceInterface) TagControllerInterface {
 
 // ///////controllers/////////////////
 func (controller tagController) Create(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	tag := &Tag{}
 	// code := c.Param("majorcode")
 
@@ -57,7 +56,6 @@ func (controller tagController) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, "created successifuly")
 }// ///////controllers/////////////////
 func (controller tagController) Create1(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	tag := &Tag{}
 	err := c.Bind(&tag); if err != nil {
 		return c.String(http.StatusBadRequest, "bad request")
@@ -71,7 +69,6 @@ func (controller tagController) Create1(c echo.Context) error {
 }
 
 func (controller tagController) GetAll(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	// fmt.Println(">>>>>>>>>>>tag Bizname", Bizname)
 	tags, err3 := controller.service.GetAll()
 	if err3 != nil {
@@ -80,7 +77,6 @@ func (controller tagController) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, tags)
 }
 func (controller tagController) GetOne(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	id := c.Param("code")
 	fmt.Println(">>>>>>>>>>>tag Bizname get one=====>", c.Request().Body)
 	tag, problem := controller.service.GetOne(id)
@@ -90,7 +86,6 @@ func (controller tagController) GetOne(c echo.Context) error {
 	return c.JSON(http.StatusOK, tag)
 }
 func (controller tagController) Featured(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	code := c.Param("code")
 	status := c.FormValue("status")
 	fmt.Println("ccccccccccccccccccccc", status)
@@ -106,7 +101,6 @@ func (controller tagController) Featured(c echo.Context) error {
 	return c.JSON(http.StatusOK, "updated succesifully")
 }
 func (controller tagController) Update(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	tag := &Tag{}
 	tag.Name = c.FormValue("name")
 	tag.Description = c.FormValue("description")
@@ -169,7 +163,6 @@ func (controller tagController) Update(c echo.Context) error {
 }
 
 func (controller tagController) Delete(c echo.Context) error {
-	Bizname = c.Get("bizname").(string)
 	id := c.Param("code")
 	success, failure := controller.service.Delete(id)
 	if failure != nil {
