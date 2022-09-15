@@ -47,7 +47,6 @@ func (controller tagController) Create(c echo.Context) error {
 	tag.Name = c.FormValue("name")
 	tag.Description = c.FormValue("description")
 	tag.Title = c.FormValue("title")
-	tag.Shopalias = c.Get("bizname").(string)
 	// fmt.Println(">>>>>>>>>>>tag create", tag)
 	_, err1 := controller.service.Create(tag)
 	if err1 != nil {

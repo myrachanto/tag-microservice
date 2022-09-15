@@ -55,7 +55,6 @@ func (r *tagrepository) Create(tag *Tag) (*Tag, httperrors.HttpErr) {
 		return nil, httperrors.NewNotFoundError("That Major Category already exist!")
 	}
 	tag.Code = code
-	tag.Shopalias = Bizname
 	tag.Url = support.Joins(tag.Name)
 	// fmt.Println("create tag-----------step2", tag)
 	collection := db.Mongodb.Collection("tag")
@@ -82,7 +81,6 @@ func (r *tagrepository) GetOne(id string) (tag *Tag, errors httperrors.HttpErr) 
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"code", id}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	err := collection.FindOne(ctx, filter).Decode(&tag)
@@ -96,11 +94,7 @@ func (r *tagrepository) GetAll() ([]*Tag, httperrors.HttpErr) {
 	tags := []*Tag{}
 	// fmt.Println("tag get all-------------", db.Mongodb)
 	collection := db.Mongodb.Collection("tag")
-	filter := bson.D{
-		{"$and", bson.A{
-			bson.D{{"shopalias", Bizname}},
-		}},
-	}
+	filter := bson.M{}
 	cur, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, httperrors.NewNotFoundError("no results found")
@@ -128,7 +122,6 @@ func (r *tagrepository) Feature(Bizname string) ([]Tag, httperrors.HttpErr) {
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"featured", true}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	tags := []Tag{}
@@ -160,7 +153,6 @@ func (r *tagrepository) Featured(code string, status bool) httperrors.HttpErr {
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"code", code}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	err := collection.FindOne(ctx, filter).Decode(&upay)
@@ -209,9 +201,6 @@ func (r *tagrepository) Update(code string, tag *Tag) (*Tag, httperrors.HttpErr)
 	if tag.Code == "" {
 		tag.Code = result.Code
 	}
-	if tag.Shopalias == "" {
-		tag.Shopalias = result.Shopalias
-	}
 	if !tag.Featured {
 		tag.Featured = result.Featured
 	}
@@ -222,7 +211,6 @@ func (r *tagrepository) Update(code string, tag *Tag) (*Tag, httperrors.HttpErr)
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"code", code}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	// fmt.Println("result+++++++++++++++++++++++++++step2")
@@ -249,7 +237,6 @@ func (r *tagrepository) Delete(id string) (string, httperrors.HttpErr) {
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"code", id}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	ok, err := collection.DeleteOne(ctx, filter)
@@ -261,20 +248,15 @@ func (r *tagrepository) Delete(id string) (string, httperrors.HttpErr) {
 func (r *tagrepository) genecode() (string, httperrors.HttpErr) {
 
 	special := support.Stamper()
-	special2 := Bizname[0:5]
 	collection := db.Mongodb.Collection("tag")
-	filter := bson.D{
-		{"$and", bson.A{
-			bson.D{{"shopalias", Bizname}},
-		}},
-	}
+	filter := bson.M{}
 	count, err := collection.CountDocuments(ctx, filter)
 	co := count + 1
 	if err != nil {
-		code := "tagCode" + special2 + strconv.FormatUint(uint64(co), 10) + "-" + special
+		code := "tagCode"  + strconv.FormatUint(uint64(co), 10) + "-" + special
 		return code, nil
 	}
-	code := "tagCode" + special2 + strconv.FormatUint(uint64(co), 10) + "-" + special
+	code := "tagCode"  + strconv.FormatUint(uint64(co), 10) + "-" + special
 	return code, nil
 }
 func (r *tagrepository) getuno(code string) (result *Tag, err httperrors.HttpErr) {
@@ -286,7 +268,6 @@ func (r *tagrepository) getuno(code string) (result *Tag, err httperrors.HttpErr
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"code", code}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	err1 := collection.FindOne(ctx, filter).Decode(&result)
@@ -305,7 +286,6 @@ func (r *tagrepository) GetunobyCode(name, Bizname string) (result *Tag, err htt
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"code", name}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	fmt.Println("---------------------------", filter)
@@ -325,7 +305,6 @@ func (r *tagrepository) GetunobyName(name, Bizname string) (result *Tag, err htt
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"name", name}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	err1 := collection.FindOne(ctx, filter).Decode(&result)
@@ -345,7 +324,6 @@ func (r *tagrepository) CheckifExist(name, Bizname string) bool {
 	filter := bson.D{
 		{"$and", bson.A{
 			bson.D{{"name", name}},
-			bson.D{{"shopalias", Bizname}},
 		}},
 	}
 	err1 := collection.FindOne(ctx, filter).Decode(&result)

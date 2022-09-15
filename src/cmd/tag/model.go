@@ -12,7 +12,6 @@ type Tag struct {
 	Title       string             `json:"title"`
 	Description string             `json:"description"`
 	Code        string             `json:"code"`
-	Shopalias   string             `json:"shopalias"`
 	Url         string             `json:"url"`
 	Used        bool               `json:"used"`
 	Picture     string             `json:"picture"`
