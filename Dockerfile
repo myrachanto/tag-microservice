@@ -12,9 +12,8 @@ RUN go build -o single main.go
 #run stage
 FROM alpine 
 WORKDIR /app
-COPY --from=builder /app/single .
-COPY app.env .
+COPY --from=builder /app/tag .
 COPY .env .
 
 EXPOSE 2200
-CMD ["/app/single"]
+CMD ["/app/tag"]
