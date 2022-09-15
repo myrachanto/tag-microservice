@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . .
 RUN go mod download
 
-RUN go build -o single main.go
+RUN go build -o tag main.go
 
 #run stage
 FROM alpine 
