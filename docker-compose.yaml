@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: backend
+    restart: always
+    # image: myrachanto/single_backend:0.0.2
+    ports:
+      - "2200:2200"
+    depends_on:
+      - mongo-database
+    # entrypoint: ["/app/wait-for.sh","single_database:27017", "--", "/app/single"]
+    # command: ["/app/single"]
+    # networks:
+    #   - single
