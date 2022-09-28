@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	httperrors "github.com/myrachanto/erroring"
 	"github.com/myrachanto/microservice/tag/src/db"
@@ -54,6 +55,8 @@ func (r *tagrepository) Create(tag *Tag) (*Tag, httperrors.HttpErr) {
 	if ok {
 		return nil, httperrors.NewNotFoundError("That Major Category already exist!")
 	}
+	tag.Base.Updated_At = time.Now()
+	tag.Base.Created_At = time.Now()
 	tag.Code = code
 	tag.Url = support.Joins(tag.Name)
 	// fmt.Println("create tag-----------step2", tag)
@@ -207,6 +210,7 @@ func (r *tagrepository) Update(code string, tag *Tag) (*Tag, httperrors.HttpErr)
 	if tag.Picture == "" {
 		tag.Picture = result.Picture
 	}
+	tag.Base.Updated_At = time.Now()
 	collection := db.Mongodb.Collection("tag")
 	filter := bson.D{
 		{"$and", bson.A{
@@ -253,10 +257,10 @@ func (r *tagrepository) genecode() (string, httperrors.HttpErr) {
 	count, err := collection.CountDocuments(ctx, filter)
 	co := count + 1
 	if err != nil {
-		code := "tagCode"  + strconv.FormatUint(uint64(co), 10) + "-" + special
+		code := "tagCode" + strconv.FormatUint(uint64(co), 10) + "-" + special
 		return code, nil
 	}
-	code := "tagCode"  + strconv.FormatUint(uint64(co), 10) + "-" + special
+	code := "tagCode" + strconv.FormatUint(uint64(co), 10) + "-" + special
 	return code, nil
 }
 func (r *tagrepository) getuno(code string) (result *Tag, err httperrors.HttpErr) {
