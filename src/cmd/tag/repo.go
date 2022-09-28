@@ -96,9 +96,11 @@ func (r *tagrepository) GetOne(id string) (tag *Tag, errors httperrors.HttpErr) 
 func (r *tagrepository) GetAll() ([]*Tag, httperrors.HttpErr) {
 	tags := []*Tag{}
 	// fmt.Println("tag get all-------------", db.Mongodb)
+	opts := options.Find()
+	opts.SetSort(bson.D{{"name", -1}})
 	collection := db.Mongodb.Collection("tag")
 	filter := bson.M{}
-	cur, err := collection.Find(ctx, filter)
+	cur, err := collection.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, httperrors.NewNotFoundError("no results found")
 	}
