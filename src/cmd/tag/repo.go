@@ -223,7 +223,7 @@ func (r *tagrepository) Update(code string, tag *Tag) (*Tag, httperrors.HttpErr)
 	}
 	// fmt.Println("result+++++++++++++++++++++++++++step2")
 	update := bson.M{"$set": tag}
-	result1, err := collection.UpdateOne(ctx, filter, update)
+	_, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return nil, httperrors.NewNotFoundError("Error updating!")
 	}
@@ -234,7 +234,7 @@ func (r *tagrepository) Update(code string, tag *Tag) (*Tag, httperrors.HttpErr)
 	// 	return nil, e
 	// }
 
-	tag.ID = result1.UpsertedID.(primitive.ObjectID)
+	// tag.ID = result1.UpsertedID.(primitive.ObjectID)
 	return tag, nil
 }
 func (r *tagrepository) Delete(id string) (string, httperrors.HttpErr) {
