@@ -10,6 +10,7 @@ import (
 	"github.com/myrachanto/microservice/tag/src/db"
 	"github.com/myrachanto/microservice/tag/src/support"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -61,16 +62,17 @@ func (r *tagrepository) Create(tag *Tag) (*Tag, httperrors.HttpErr) {
 	tag.Url = support.Joins(tag.Name)
 	// fmt.Println("create tag-----------step2", tag)
 	collection := db.Mongodb.Collection("tag")
-	_, err := collection.InsertOne(ctx, tag)
+	result, err := collection.InsertOne(ctx, tag)
 	if err != nil {
 		// fmt.Println("err -------", err)
 		return nil, httperrors.NewBadRequestError(fmt.Sprintf("Create product Failed, %d", err))
 	}
-	tag, e := r.getuno(tag.Code)
+	// tag, e := r.getuno(tag.Code)
 
-	if e != nil {
-		return nil, e
-	}
+	// if e != nil {
+	// 	return nil, e
+	// }
+	tag.ID = result.InsertedID.(primitive.ObjectID)
 	return tag, nil
 }
 
@@ -221,16 +223,18 @@ func (r *tagrepository) Update(code string, tag *Tag) (*Tag, httperrors.HttpErr)
 	}
 	// fmt.Println("result+++++++++++++++++++++++++++step2")
 	update := bson.M{"$set": tag}
-	_, err := collection.UpdateOne(ctx, filter, update)
+	result1, err := collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return nil, httperrors.NewNotFoundError("Error updating!")
 	}
 
-	tag, e := r.getuno(tag.Code)
+	// tag, e := r.getuno(tag.Code)
 
-	if e != nil {
-		return nil, e
-	}
+	// if e != nil {
+	// 	return nil, e
+	// }
+
+	tag.ID = result1.UpsertedID.(primitive.ObjectID)
 	return tag, nil
 }
 func (r *tagrepository) Delete(id string) (string, httperrors.HttpErr) {
